@@ -22,19 +22,21 @@ var options = {
 // console.log(requestURL);
 // console.log(options);
 
-  request.get(options)
+  request.get(options, function(error, response, body) {
 
-
-
-    .on('error', function(err) {
       console.log('error, error. danger will robinson!');
-    })
-    .on('response', function(response) {
+
+      var info = JSON.parse(response.body);
+      // console.log(info);
+      // console.log(response.body);
       console.log('Response status code: ', response.statusCode);
-      console.log(response.body);
-    })
+      for (let avatarURL in info)
+      console.log(info[avatarURL].avatar_url);
+
+    // })
   //   // .pipe(fs.createWriteStream('./avatars/'));
-    };
+    });
+};
 
 
 getRepoContributors("jquery", "jquery", function(err, result) {
