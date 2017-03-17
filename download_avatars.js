@@ -2,7 +2,8 @@ var request = require('request');
 var fs = require('fs');
 var GITHUB_USER = "rayvayvo";
 var GITHUB_TOKEN = "429ecee99249ff0283a5659df205e8ccc3c2864b";
-
+var owner = process.argv[2];
+var repo = process.argv[3];
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -10,36 +11,42 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 //the third being a URL, and downloads all the images from the  URLs
 function getRepoContributors(repoOwner, repoName, cb) {
 
-  var requestURL = 'https://' + GITHUB_USER + ":" + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  // if (repoOwner.length > 0 && repoName.length > 0)
+    var requestURL = 'https://' + GITHUB_USER + ":" + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
 
-  var options = {
-    url: requestURL,
-    headers: {
-      'User-Agent': "GitHub Avatar Downloader"
-    }
-  };
+    var options = {
+      url: requestURL,
+      headers: {
+        'User-Agent': "GitHub Avatar Downloader"
+      }
+    };
 
-  request.get(options, function(error, response, body) {
+    request.get(options, function(error, response, body) {
 
-    if (error) {
-      console.log('error, error. danger will robinson!');
-    } else {
+      if (error) {
+        console.log('error, error. danger will robinson!');
+      } else {
 
 
-      var info = JSON.parse(response.body);
-      console.log('Response status code: ', response.statusCode);
-      for (let avatarURL in info)
-        request.get(info[avatarURL].avatar_url)               // Note 1
-       .pipe(fs.createWriteStream(`./downloaded/${info[avatarURL].login}.png`));
+        var info = JSON.parse(response.body);
+        console.log('Response status code: ', response.statusCode);
+        for (let avatarURL in info)
+          request.get(info[avatarURL].avatar_url)               // Note 1
+         .pipe(fs.createWriteStream(`./downloaded/${info[avatarURL].login}.png`));
 
-    }
+      }
 
-  });
+    });
 };
 
-getRepoContributors("jquery", "jquery", function(err, result) {
-  console.log("Errors:", err);
-  console.log("Result:", result);
-});
+
+if (!process.argv[2] || !process.argv[3]) {
+  console.log("Not enough info. please retry with: <owner> <repo> ")
+} else {
+  getRepoContributors(process.argv[2], process.argv[3], function(err, result) {
+    console.log("Errors:", err);
+    console.log("Result:", result);
+  });
+};
 
 
