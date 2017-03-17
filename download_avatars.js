@@ -2,14 +2,12 @@ var request = require('request');
 var fs = require('fs');
 var GITHUB_USER = "rayvayvo";
 var GITHUB_TOKEN = "429ecee99249ff0283a5659df205e8ccc3c2864b";
-var owner = process.argv[2];
-var repo = process.argv[3];
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 //function that pulls up a list of contributors, pulls out the first 3 keys of each object,
 //the third being a URL, and downloads all the images from the  URLs
-function getRepoContributors(repoOwner, repoName, cb) {
+function downloadAvatars(repoOwner, repoName, cb) {
 
   // if (repoOwner.length > 0 && repoName.length > 0)
     var requestURL = 'https://' + GITHUB_USER + ":" + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
@@ -39,11 +37,11 @@ function getRepoContributors(repoOwner, repoName, cb) {
     });
 };
 
-
+//check if there's input, if not return error, if so, run the downloading function.
 if (!process.argv[2] || !process.argv[3]) {
   console.log("Not enough info. please retry with: <owner> <repo> ")
 } else {
-  getRepoContributors(process.argv[2], process.argv[3], function(err, result) {
+  downloadAvatars(process.argv[2], process.argv[3], function(err, result) {
     console.log("Errors:", err);
     console.log("Result:", result);
   });
