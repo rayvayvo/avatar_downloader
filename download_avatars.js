@@ -9,7 +9,6 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 //the third being a URL, and downloads all the images from the  URLs
 function downloadAvatars(repoOwner, repoName, cb) {
 
-  // if (repoOwner.length > 0 && repoName.length > 0)
     var requestURL = 'https://' + GITHUB_USER + ":" + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
 
     var options = {
@@ -23,15 +22,15 @@ function downloadAvatars(repoOwner, repoName, cb) {
 
       if (error) {
         console.log('error, error. danger will robinson!');
+
       } else {
+          var info = JSON.parse(response.body);
+          console.log('Response status code: ', response.statusCode);
 
-
-        var info = JSON.parse(response.body);
-        console.log('Response status code: ', response.statusCode);
-        for (let avatarURL in info)
-          request.get(info[avatarURL].avatar_url)               // Note 1
-         .pipe(fs.createWriteStream(`./downloaded/${info[avatarURL].login}.png`));
-
+          for (let avatarURL in info) {
+            request.get(info[avatarURL].avatar_url)
+            .pipe(fs.createWriteStream(`./downloaded/${info[avatarURL].login}.png`));
+          }
       }
 
     });
